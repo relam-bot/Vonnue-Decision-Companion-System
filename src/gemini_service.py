@@ -1,7 +1,7 @@
 import json
 from google import genai
 
-API_KEY = "AIzaSyDnWLtSKIl4xSXvRwXy2RGFpUfIJT6e-j0"
+API_KEY = ""
 
 client = genai.Client(api_key=API_KEY)
 
