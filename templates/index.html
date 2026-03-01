@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cardamom Farmer Assistant</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="chat-wrapper">
+    <div class="chat-header">
+        🌿 Cardamom Farmer Assistant
+    </div>
+
+    <div id="chat-box" class="chat-box"></div>
+
+    <div class="input-area">
+        <input 
+            type="text" 
+            id="user-input" 
+            placeholder="Type your message..." 
+            autocomplete="off"
+            onkeydown="handleKey(event)"
+        >
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<script>
+
+function handleKey(event) {
+    if (event.key === "Enter") {
+        sendMessage();
+    }
+}
+
+async function sendMessage() {
+
+    const input = document.getElementById("user-input");
+    const message = input.value.trim();
+    if (!message) return;
+
+    addMessage(message, "user");
+    input.value = "";
+
+    showTyping();
+
+    const response = await fetch("/chat", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({message})
+    });
+
+    const data = await response.json();
+
+    removeTyping();
+    addMessage(data.response, "bot");
+}
+
+function addMessage(text, sender) {
+    const chatBox = document.getElementById("chat-box");
+
+    const messageDiv = document.createElement("div");
+    messageDiv.classList.add("message", sender);
+
+    messageDiv.innerText = text;
+    chatBox.appendChild(messageDiv);
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function showTyping() {
+    const chatBox = document.getElementById("chat-box");
+    const typing = document.createElement("div");
+    typing.classList.add("message", "bot");
+    typing.id = "typing-indicator";
+    typing.innerText = "Typing...";
+    chatBox.appendChild(typing);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function removeTyping() {
+    const typing = document.getElementById("typing-indicator");
+    if (typing) typing.remove();
+}
+
+</script>
+
+</body>
+</html>
