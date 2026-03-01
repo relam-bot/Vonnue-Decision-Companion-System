@@ -1,35 +1,57 @@
 import json
 import os
 
-DATA_FILE = "farm_data.json"
 
 class ContextManager:
-    def __init__(self):
-        self.context = {}
-        self.load_context()
 
-    def load_context(self):
-        if os.path.exists(DATA_FILE):
-            with open(DATA_FILE, "r") as f:
-                try:
+    def __init__(self):
+        self.file_path = "context.json"
+        self.context = {}
+
+        # Load existing context if file exists
+        if os.path.exists(self.file_path):
+            try:
+                with open(self.file_path, "r") as f:
                     self.context = json.load(f)
-                except:
-                    self.context = {}
+            except:
+                self.context = {}
         else:
             self.context = {}
 
-    def save_context(self):
-        with open(DATA_FILE, "w") as f:
-            json.dump(self.context, f, indent=4)
+    # ------------------------------------------------------
 
-    def update(self, new_data: dict):
-        self.context.update(new_data)
-        self.save_context()
+    def update(self, data: dict):
+        """
+        Updates context with new data and saves to file
+        """
 
-    def get(self, key):
-        return self.context.get(key)
+        if not isinstance(data, dict):
+            return
+
+        # Update in-memory context
+        for key, value in data.items():
+            self.context[key] = value
+
+        # Save to file
+        self._save()
+
+    # ------------------------------------------------------
 
     def clear(self):
+        """
+        Clears context memory and file
+        """
         self.context = {}
-        if os.path.exists(DATA_FILE):
-            os.remove(DATA_FILE)
+        self._save()
+
+    # ------------------------------------------------------
+
+    def _save(self):
+        """
+        Writes context to JSON file
+        """
+        try:
+            with open(self.file_path, "w") as f:
+                json.dump(self.context, f, indent=4)
+        except:
+            pass
