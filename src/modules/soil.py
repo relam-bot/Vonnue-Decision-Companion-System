@@ -1,56 +1,51 @@
-from modules.base_module import BaseModule
+from src.modules.base_module import BaseModule
 
 
 class SoilModule(BaseModule):
 
     def required_fields(self):
-        # Minimum required
         return ["soil_ph", "soil_drainage"]
+
+    def field_prompt(self, field):
+        prompts = {
+            "soil_ph": "Enter soil pH value (example: 5.8):",
+            "soil_drainage": "Enter drainage condition (poor / moderate / good):"
+        }
+        return prompts[field]
+
+    def parse_and_store(self, field, user_input, context_manager):
+
+        if field == "soil_ph":
+            context_manager.update({"soil_ph": float(user_input)})
+
+        elif field == "soil_drainage":
+            context_manager.update({"soil_drainage": user_input.lower()})
 
     def run(self):
 
-        soil_ph = self.context.get("soil_ph")
-        drainage = self.context.get("soil_drainage")
-        organic = self.context.get("organic_matter")
+        ph = self.context["soil_ph"]
+        drainage = self.context["soil_drainage"]
 
-        if soil_ph is None or drainage is None:
-            return {
-                "explanation": "Insufficient data. Please provide soil pH and drainage condition."
-            }
+        score = 100
+        summary = "Soil Health Assessment\n\n"
 
-        explanation = ""
-        suitability_score = 100
-
-        # ------------------------------
-        # pH Analysis
-        # ------------------------------
-        if 5.5 <= soil_ph <= 6.5:
-            explanation += "Soil pH is optimal.\n"
-        elif soil_ph < 5.5:
-            explanation += "Soil is acidic.\n"
-            suitability_score -= 15
+        if 5.5 <= ph <= 6.5:
+            summary += "pH is optimal for cardamom.\n"
+        elif ph < 5.5:
+            summary += "Soil is acidic.\n"
+            score -= 15
         else:
-            explanation += "Soil is slightly alkaline.\n"
-            suitability_score -= 10
+            summary += "Soil slightly alkaline.\n"
+            score -= 10
 
-        # ------------------------------
-        # Drainage Analysis
-        # ------------------------------
         if drainage == "poor":
-            explanation += "Poor drainage detected.\n"
-            suitability_score -= 20
+            summary += "Poor drainage detected.\n"
+            score -= 20
         elif drainage == "moderate":
-            explanation += "Moderate drainage.\n"
-        elif drainage == "good":
-            explanation += "Good drainage.\n"
+            summary += "Moderate drainage.\n"
+        else:
+            summary += "Good drainage.\n"
 
-        # ------------------------------
-        # Organic Matter
-        # ------------------------------
-        if organic == "low":
-            explanation += "Organic matter is low.\n"
-            suitability_score -= 10
+        summary += f"\nSoil Suitability Score: {score}/100\n"
 
-        explanation += f"\nSoil Suitability Score: {suitability_score}/100\n"
-
-        return {"explanation": explanation}
+        return {"summary": summary}
