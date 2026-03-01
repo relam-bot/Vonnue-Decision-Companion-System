@@ -1,43 +1,57 @@
+ALLOWED_FIELDS = {
+    "module",
+    "num_plants",
+    "water_availability",
+    "budget",
+    "rainfall_level",
+    "soil_drainage",
+    "terrain",
+    "climate_temperature",
+    "growth_stage",
+    "labour_availability",
+    "water_source",
+    "climate_humidity",
+    "soil_ph",
+    "nitrogen_level",
+    "phosphorus_level",
+    "potassium_level",
+    "organic_matter",
+    "leaf_symptom",
+    "pest_query",
+    "season",
+    "disease_pressure",
+    "shade_percent",
+    "altitude",
+    "market_priority"
+}
+
+
 def validate_data(data):
 
     validated = {}
 
     for key, value in data.items():
 
-        # Skip None values
+        if key not in ALLOWED_FIELDS:
+            continue
+
         if value is None:
             continue
 
-        # -------------------------
-        # Numeric Fields
-        # -------------------------
-
-        if key in ["num_plants"]:
-            try:
+        try:
+            if key == "num_plants":
                 validated[key] = int(value)
-            except:
-                raise ValueError(f"{key} must be a number.")
 
-        elif key in ["soil_ph"]:
-            try:
+            elif key == "soil_ph":
                 validated[key] = float(value)
-            except:
-                raise ValueError("soil_ph must be a number.")
 
-        elif key in ["shade_percent"]:
-            try:
+            elif key == "shade_percent":
                 validated[key] = int(value)
-            except:
-                raise ValueError("shade_percent must be a number.")
 
-        # -------------------------
-        # String Fields
-        # -------------------------
-
-        else:
-            if isinstance(value, str):
-                validated[key] = value.lower().strip()
             else:
-                validated[key] = value
+                validated[key] = value.lower().strip() if isinstance(value, str) else value
+
+        except:
+            continue
 
     return validated
