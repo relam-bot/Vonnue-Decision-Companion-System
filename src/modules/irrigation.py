@@ -1,4 +1,4 @@
-from modules.base_module import BaseModule
+from src.modules.base_module import BaseModule
 
 
 class IrrigationModule(BaseModule):
@@ -6,56 +6,42 @@ class IrrigationModule(BaseModule):
     def required_fields(self):
         return ["num_plants", "water_availability", "budget"]
 
+    def field_prompt(self, field):
+        prompts = {
+            "num_plants": "Enter number of plants (example: 150):",
+            "water_availability": "Enter water availability (low / medium / high):",
+            "budget": "Enter budget level (low / medium / high):"
+        }
+        return prompts[field]
+
+    def parse_and_store(self, field, user_input, context_manager):
+
+        if field == "num_plants":
+            context_manager.update({"num_plants": int(user_input)})
+
+        elif field == "water_availability":
+            context_manager.update({"water_availability": user_input})
+
+        elif field == "budget":
+            context_manager.update({"budget": user_input})
+
     def run(self):
 
-        num_plants = self.context.get("num_plants")
-        water = self.context.get("water_availability")
-        budget = self.context.get("budget")
+        plants = self.context["num_plants"]
+        water = self.context["water_availability"]
+        budget = self.context["budget"]
 
-        if num_plants is None or water is None or budget is None:
-            return {
-                "explanation": "Insufficient data. Please provide number of plants, water availability, and budget."
-            }
+        summary = "Irrigation Plan Recommendation\n\n"
 
-        explanation = "Irrigation Recommendation:\n\n"
-        scores = {}
+        if plants <= 20:
+            summary += "Recommended: Manual irrigation\n"
+        elif water == "low":
+            summary += "Recommended: Drip irrigation (water efficient)\n"
+        elif water == "high" and budget == "high":
+            summary += "Recommended: Sprinkler system\n"
+        else:
+            summary += "Recommended: Drip irrigation\n"
 
-        # Base Scoring
-        scores["Drip"] = 0
-        scores["Sprinkler"] = 0
-        scores["Manual"] = 0
+        summary += "\nDecision based on farm size, water, and budget."
 
-        # Water availability impact
-        if water == "low":
-            scores["Drip"] += 3
-            scores["Sprinkler"] += 1
-        elif water == "medium":
-            scores["Drip"] += 2
-            scores["Sprinkler"] += 2
-        elif water == "high":
-            scores["Sprinkler"] += 3
-            scores["Manual"] += 2
-
-        # Budget impact
-        if budget == "low":
-            scores["Manual"] += 3
-        elif budget == "medium":
-            scores["Sprinkler"] += 2
-        elif budget == "high":
-            scores["Drip"] += 3
-
-        # Farm size logic
-        if num_plants > 200:
-            scores["Drip"] += 2
-        elif num_plants < 50:
-            scores["Manual"] += 2
-
-        # Rank
-        ranking = sorted(scores.items(), key=lambda x: x[1], reverse=True)
-
-        for method, score in ranking:
-            explanation += f"- {method}: Score {score}\n"
-
-        explanation += "\nDecision based on water availability, budget, and farm size."
-
-        return {"explanation": explanation}
+        return {"summary": summary}
