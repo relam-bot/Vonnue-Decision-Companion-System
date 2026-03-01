@@ -1,4 +1,4 @@
-from modules.base_module import BaseModule
+from src.modules.base_module import BaseModule
 
 
 class ShadeModule(BaseModule):
@@ -6,26 +6,22 @@ class ShadeModule(BaseModule):
     def required_fields(self):
         return ["shade_percent"]
 
+    def field_prompt(self, field):
+        return "Enter shade percentage (example: 45):"
+
+    def parse_and_store(self, field, user_input, context_manager):
+        context_manager.update({"shade_percent": int(user_input)})
+
     def run(self):
 
-        shade = self.context.get("shade_percent")
+        shade = self.context["shade_percent"]
+        summary = "Shade Requirement Analysis\n\n"
 
-        if shade is None:
-            return {
-                "explanation": "Insufficient data. Please provide shade percentage."
-            }
-
-        explanation = ""
-
-        if 50 <= shade <= 60:
-            explanation += "Shade level is optimal for cardamom.\n"
-        elif shade < 50:
-            explanation += "Shade is insufficient.\n"
-            explanation += "Recommendation: Increase canopy cover.\n"
+        if shade < 40:
+            summary += "Insufficient shade. Risk of sun stress.\n"
+        elif 40 <= shade <= 60:
+            summary += "Optimal shade for healthy growth.\n"
         else:
-            explanation += "Excess shade detected.\n"
-            explanation += "Recommendation: Thin canopy for better airflow.\n"
+            summary += "Excess shade. Risk of fungal diseases.\n"
 
-        explanation += "\nDecision based strictly on shade percentage."
-
-        return {"explanation": explanation}
+        return {"summary": summary}
