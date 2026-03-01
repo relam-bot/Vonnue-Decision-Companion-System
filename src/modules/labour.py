@@ -1,78 +1,39 @@
-from modules.base_module import BaseModule
+from src.modules.base_module import BaseModule
 
 
 class LabourModule(BaseModule):
 
     def required_fields(self):
-        return ["num_plants", "labour_availability"]
+        return ["num_plants"]
+
+    def field_prompt(self, field):
+        if field == "num_plants":
+            return "Enter number of plants (example: 100):"
+
+    def parse_and_store(self, field, user_input, context_manager):
+        if field == "num_plants":
+            try:
+                context_manager.update({"num_plants": int(user_input)})
+            except:
+                pass
 
     def run(self):
 
-        num_plants = self.context.get("num_plants")
-        labour = self.context.get("labour_availability")
-        growth_stage = self.context.get("growth_stage")
-        budget = self.context.get("budget")
-        terrain = self.context.get("terrain")
+        plants = self.context.get("num_plants")
 
-        if num_plants is None or labour is None:
-            return {
-                "explanation": "Insufficient data. Please provide number of plants and labour availability."
-            }
+        workers_needed = max(1, plants // 75)
 
-        explanation = "Labour Planning Recommendation:\n\n"
+        summary = "Labour Requirement Analysis\n\n"
+        summary += f"Total Plants: {plants}\n"
+        summary += f"Recommended Workers: {workers_needed}\n\n"
 
-        # ------------------------------
-        # Basic Labour Requirement Logic
-        # ------------------------------
-
-        if num_plants <= 50:
-            base_need = "low"
-        elif 50 < num_plants <= 200:
-            base_need = "medium"
+        if plants <= 20:
+            summary += "Small farm. 1 worker sufficient.\n"
+        elif plants <= 200:
+            summary += "Moderate farm size. Plan structured work schedule.\n"
         else:
-            base_need = "high"
+            summary += "Large farm. Consider permanent labour team.\n"
 
-        explanation += f"Estimated Labour Requirement: {base_need}\n"
-
-        # ------------------------------
-        # Compare With Available Labour
-        # ------------------------------
-
-        if labour == "low" and base_need in ["medium", "high"]:
-            explanation += "\n⚠ Labour shortage risk detected.\n"
-            explanation += "- Consider temporary workers during peak season.\n"
-
-        elif labour == "medium" and base_need == "high":
-            explanation += "\nModerate labour pressure expected.\n"
-            explanation += "- Plan task scheduling carefully.\n"
-
-        else:
-            explanation += "\nLabour availability is adequate.\n"
-
-        # ------------------------------
-        # Growth Stage Impact
-        # ------------------------------
-
-        if growth_stage == "flowering":
-            explanation += "\nFlowering stage requires close monitoring and skilled labour.\n"
-
-        elif growth_stage == "harvest":
-            explanation += "\nHarvest stage is labour-intensive.\n"
-
-        # ------------------------------
-        # Terrain Impact
-        # ------------------------------
-
-        if terrain == "steep":
-            explanation += "\nSteep terrain increases manual labour demand.\n"
-
-        # ------------------------------
-        # Budget Consideration
-        # ------------------------------
-
-        if budget == "low" and labour == "low":
-            explanation += "\nLow budget + low labour may reduce productivity.\n"
-
-        explanation += "\nDecision based on farm size and labour availability."
-
-        return {"explanation": explanation}
+        return {
+            "summary": summary
+        }
