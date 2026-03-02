@@ -137,3 +137,16 @@ Sensitivity Analyzer
 Response Generator
   ↓
 User
+
+
+Day 3
+
+So today i started coding the system with help of chatgpt.We started with the main.py which is the start of the full operation.So the Layer are
+A Question Handling Layer
+A Decision Engine Layer
+A Response Generator
+i created a simple question handling layer ,decision and response layer and output was little bit funny then i realized some modules require some concrete information to provide answers so i think.the chatbot should ask if any information is required.Gpt then told that we need a context.py which will store all the data that model needs to understand which module it is and how it shuld perform
+The input system looked so boring that it didnt get context half the time.So i thought that a gemini api can be implemented for its NLP property.then we sorted the global variable in all the modules so we could store them as one and other variables in their own module variables.I ran some test cases on the model the resuts were ohkey not great.then we implementedd the validateion layer which validates the data entered during input so that numbers get stored and number and characters are characters.
+I needed the core of the project the conversation_manager this handles the context and intention and collets the requirement for the project the amount of time and pain that took make this properly working was concerning.Now we did the full modules like the irrigation,soil,fertilizer,pesticides,variety and shade.then we connected them into the conversation manager as it decides which module to be callded and which all details are required additionally.
+As i completed the full model on a smaller version i thought i should run some test cases.It ended in disaster as the modules that read and intented were different and wrong.i tried to add more into the modules as debugged the issues with help of gpt.Now we have a expanded modules and new gemini integration that understands important details and takes all that input accordingly.But it later became a disaster as i didnt check it in every stage we caused every module and feature to fail. in the middle my free API key also hit daily limit.Then i finally made it better the model stopped taking my input and the whole model was returning values based on my previous runs so i understand that the persistant memory was causing the problem.I ended up reworking most of the modules.It still didnt work i just commited the code into the git as i was sleepy and exhausted.
+
