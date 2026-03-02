@@ -91,5 +91,36 @@ explanation layer
 
 generate the conversation manager full code and all modules with explain feature
 
+
+Day 4
+
+
+my model is not working so if i copy it here will u correct it
+
+1️⃣ Fix reset command 2️⃣ Remove persistent auto-loading 3️⃣ Secure Gemini API 4️⃣ Properly implement explanation layer 5️⃣ Optionally integrate DecisionEngine
+
+no we are still debugging create test cases for all the module
+
+so generate it as it checks if the current module is correct or not other wise change to correct module
+
+can we make it so it works without gemini and will it work perfectly
+
+Add automated test suite
+
+make it like after every complete run ask again which topic u wanna explore next
+
+now we are gonna a ui for this and make it like a chatbot
+
+Make proper chatbot UI bubbles Make it look like real production chatbot send button should work when we hit enter i have a image,png for background of the webpage
+
+
+Day 5
+
+
+cani host it on github
+
+how to host this for free
+
+generate requirement.txt
 we should add explaination layer on top of each module we will do it module wise
 
